@@ -111,12 +111,41 @@ Content-Type: application/json
 }
 
 
+Endpoints da API
+Autenticação
+Método	Endpoint	Descrição	Corpo (JSON)	Respostas
+POST	/auth/registrar	Cria um usuário	{ "nome", "email", "senha" }	201, 400
+POST	/auth/login	Autentica e retorna o token	{ "email", "senha" }	200, 401
+
+
+Páginas (requerem autenticação — Bearer Token)
+Método	Endpoint	Descrição	Respostas
+GET	/paginas	Lista as páginas do usuário logado	200, 401
+GET	/paginas/:id	Consulta uma página específica	200, 400, 401, 404
+POST	/paginas	Cria uma nova página	201, 400, 401
+PATCH	/paginas/:id	Atualiza uma página (atualização parcial)	200, 400, 401, 404
+DELETE	/paginas/:id	Exclui uma página	204, 400, 401, 404
+
+
 
 Segurança
 Autenticação JWT: todas as rotas de /paginas exigem um token válido no cabeçalho Authorization no formato Bearer <token>.
 Senhas criptografadas: as senhas são armazenadas com hash bcrypt, nunca em texto puro.
 CORS: apenas a origem definida em CORS_ORIGIN pode acessar a API.
 Variáveis de ambiente: dados sensíveis ficam no .env, que não é versionado.
+
+
+Tratamento de erros
+A API retorna códigos HTTP adequados para cada situação:
+
+Código	Situação
+200	Requisição bem-sucedida
+201	Recurso criado com sucesso
+204	Operação realizada sem conteúdo de retorno
+400	Dados inválidos ou campos obrigatórios ausentes
+401	Token ausente, inválido ou credenciais incorretas
+404	Recurso não encontrado
+500	Erro interno do servidor
 
 
 Autor
