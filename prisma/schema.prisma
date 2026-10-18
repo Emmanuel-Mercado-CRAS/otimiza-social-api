@@ -1,0 +1,34 @@
+// prisma/schema.prisma
+// Aqui definimos as "tabelas" do banco de dados
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Tabela de usuários (quem usa a API)
+model User {
+  id       Int      @id @default(autoincrement()) // id gerado automaticamente
+  nome     String
+  email    String   @unique                       // não pode repetir e-mail
+  senha    String                                 // senha criptografada
+  criadoEm DateTime @default(now())               // data de criação automática
+  paginas  Pagina[]                               // um usuário tem várias páginas
+}
+
+// Tabela de páginas de redes sociais dos clientes
+model Pagina {
+  id        Int      @id @default(autoincrement())
+  nome      String                                // nome do negócio
+  url       String                                // link da página no Facebook
+  nicho     String?                               // ex: Alimentação, Moda (opcional)
+  descricao String?                               // descrição do negócio (opcional)
+  status    String   @default("pendente")         // pendente, em_andamento, otimizada
+  userId    Int                                   // quem cadastrou a página
+  user      User     @relation(fields: [userId], references: [id])
+  criadoEm  DateTime @default(now())
+}
